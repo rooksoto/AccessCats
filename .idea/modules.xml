@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$USER_HOME$/Desktop/accesscode/AccessCats/AccessCats.iml" filepath="$USER_HOME$/Desktop/accesscode/AccessCats/AccessCats.iml" />
-      <module fileurl="file://$USER_HOME$/Desktop/accesscode/AccessCats/app/app.iml" filepath="$USER_HOME$/Desktop/accesscode/AccessCats/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AccessCats.iml" filepath="$PROJECT_DIR$/AccessCats.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>

@@ -1,5 +1,6 @@
 package nyc.c4q.ramonaharrison.accesscats;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -31,6 +33,8 @@ public class CatActivity extends AppCompatActivity implements CatAdapter.Listene
     private CatAdapter catAdapter;
     private SQLiteDatabase db;
 
+    private ImageView catImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,8 @@ public class CatActivity extends AppCompatActivity implements CatAdapter.Listene
         // get an instance of the DatabaseHelper
         AnimalDatabaseHelper dbHelper = AnimalDatabaseHelper.getInstance(this);
         db = dbHelper.getWritableDatabase();
+
+        catImage = (ImageView) findViewById(R.id.iv_cat_image);
 
         catNameInput = (EditText) findViewById(R.id.et_cat_name);
 
@@ -52,7 +58,8 @@ public class CatActivity extends AppCompatActivity implements CatAdapter.Listene
                 if (!catName.isEmpty()) {
                     catNameInput.setText("");
                     Long lastFed = Calendar.getInstance().getTimeInMillis(); // Feed the cat
-                    addCat(new Cat(catName, lastFed));
+                    String imageUrl = "http://thecatapi.com/api/images/get?format=src&type=gif";
+                    addCat(new Cat(catName, lastFed, imageUrl));
 
                     refreshCatList();
                 } else {
@@ -70,6 +77,10 @@ public class CatActivity extends AppCompatActivity implements CatAdapter.Listene
 
     private void addCat(Cat cat) {
         cupboard().withDatabase(db).put(cat);
+    }
+
+    private void deleteCat(Cat cat) {
+        cupboard().withDatabase(db).delete(cat);
     }
 
     private List<Cat> selectAllCats() {
@@ -95,13 +106,23 @@ public class CatActivity extends AppCompatActivity implements CatAdapter.Listene
 
     @Override
     public void onCatClicked(Cat cat) {
-        // TODO feed the cat!
-        Toast.makeText(this, "Meow", Toast.LENGTH_SHORT).show();
+
+        ContentValues contentValues = new ContentValues(1);
+        contentValues.put("lastFed", Calendar.getInstance().getTimeInMillis());
+
+
+        cupboard().withDatabase(db).update(Cat.class, contentValues, "_id = ?", cat.getId().toString());
+
+        Toast.makeText(this, cat.getName() + " was just fed.", Toast.LENGTH_SHORT).show();
+        catAdapter.notifyDataSetChanged();
+        refreshCatList();
     }
 
     @Override
     public void onCatLongClicked(Cat cat) {
-        // TODO delete the cat!
-        Toast.makeText(this, "Rawr!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, cat.getName() + " was deleted.", Toast.LENGTH_SHORT).show();
+        deleteCat(cat);
+        catAdapter.notifyDataSetChanged();
+        refreshCatList();
     }
 }
